@@ -1,0 +1,107 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: vg-app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - vg-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: vg-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - vg-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: vg-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: video_generator
+      POSTGRES_USER: laravel
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - vg-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U laravel -d video_generator"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vg-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: vg-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - vg-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vg-network
+
+  queue:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: vg-queue
+    restart: unless-stopped
+    command: php artisan queue:work redis --queue=pipeline,default --sleep=3 --tries=3 --max-time=3600
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - vg-network
+
+  node:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    container_name: vg-node
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/node_modules
+    networks:
+      - vg-network
+
+volumes:
+  vg-postgres-data:
+  vg-redis-data:
+
+networks:
+  vg-network:
+    driver: bridge
