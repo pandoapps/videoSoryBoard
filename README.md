@@ -18,11 +18,19 @@ Two showcase videos demonstrating the full pipeline in action — script writing
 
 ### Noah's Ark (43s)
 
-<video src="public/showcase.mp4" controls width="100%"></video>
+
+
+https://github.com/user-attachments/assets/659f71c8-e92c-420c-a1a0-2514ad36b868
+
+
 
 ### Hinduism — The Battle of Lanka (50s)
 
-<video src="public/hinduism-showcase.mp4" controls width="100%"></video>
+
+
+https://github.com/user-attachments/assets/e443e198-a411-4286-a309-334cf6e52fdc
+
+
 
 ## Tech Stack
 
