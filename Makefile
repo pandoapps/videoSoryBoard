@@ -9,17 +9,18 @@ help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "$(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
 
 install: ## Full setup: build, deps, env, key, migrate, up
+	@if [ ! -f .env ]; then cp .env.example .env; echo "$(YELLOW).env created from .env.example$(NC)"; fi
 	@echo "$(GREEN)Building Docker containers...$(NC)"
 	docker compose build
 	@echo "$(GREEN)Starting services...$(NC)"
 	docker compose up -d
 	@echo "$(GREEN)Waiting for services to be ready...$(NC)"
-	sleep 5
-	@if [ ! -f .env ]; then cp .env.example .env; echo "$(YELLOW).env created from .env.example$(NC)"; fi
+	sleep 8
 	docker compose exec app composer install
-	docker compose exec app php artisan key:generate
-	docker compose exec app php artisan migrate
-	docker compose exec node npm install --legacy-peer-deps
+	docker compose exec app php artisan key:generate --force
+	docker compose exec app php artisan migrate --force
+	@echo "$(GREEN)Waiting for node dependencies to install...$(NC)"
+	sleep 15
 	@echo "$(GREEN)Installation complete! App available at http://localhost:8080$(NC)"
 
 up: ## Start all containers

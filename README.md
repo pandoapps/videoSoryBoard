@@ -1,59 +1,121 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# VideoGenerator
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Multi-agent video creation system that orchestrates AI services to turn story ideas into complete videos.
 
-## About Laravel
+## How It Works
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. **Write a script** — Chat with Claude AI to develop your story, characters, and scenes
+2. **Generate characters** — AI creates character images based on the script (Nano Banana API)
+3. **Generate storyboard** — AI produces storyboard frames for each scene (Nano Banana API)
+4. **Generate video clips** — Each consecutive frame pair becomes a video transition (Kling AI)
+5. **Concatenate** — All clips are merged into a final video via ffmpeg
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Each stage has a review step where you can approve, edit, or regenerate individual items before moving forward.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tech Stack
 
-## Learning Laravel
+- **Backend**: Laravel 12 (PHP 8.4)
+- **Frontend**: React + TypeScript + Inertia.js + Tailwind CSS
+- **Database**: PostgreSQL 16
+- **Cache/Queue**: Redis 7
+- **Storage**: AWS S3
+- **Infrastructure**: Docker Compose
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Getting Started
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Prerequisites
 
-## Laravel Sponsors
+- Docker and Docker Compose
+- Make
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Installation
 
-### Premium Partners
+```bash
+git clone <repo-url>
+cd videoGenerator
+cp .env.example .env
+make install
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+The app will be available at `http://localhost:8080`.
 
-## Contributing
+### API Keys
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Each user configures their own API keys in **Settings** (`/admin/settings`):
 
-## Code of Conduct
+| Service | Purpose | Get your key |
+|---------|---------|--------------|
+| **Anthropic** | Script writing chat (Claude) | [console.anthropic.com](https://console.anthropic.com/settings/keys) |
+| **Nano Banana** | Character and storyboard image generation | [nanobananaapi.ai](https://nanobananaapi.ai/) |
+| **Kling AI** | Video clip generation (image-to-video) | [app.klingai.com](https://app.klingai.com/global/dev/api-key) |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Keys are stored encrypted in the database and scoped per user.
 
-## Security Vulnerabilities
+## Common Commands
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+make up              # Start all containers
+make down            # Stop all containers
+make restart         # Restart containers
+make migrate         # Run database migrations
+make test            # Run tests
+make shell           # Open app container shell
+make queue           # Run queue worker in foreground
+make tinker          # Laravel Tinker REPL
+make format          # Format PHP code with Pint
+```
 
-## License
+## Docker Services
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Service | Port | Description |
+|---------|------|-------------|
+| app | — | PHP 8.4-fpm + ffmpeg |
+| nginx | 8080 | Web server |
+| postgres | 5432 | PostgreSQL database |
+| redis | 6379 | Cache + queue broker |
+| queue | — | Background job worker |
+| node | 5173 | Vite dev server |
+
+## Video Generation Options
+
+When generating video clips, each clip can be configured with:
+
+| Parameter | Options | Default |
+|-----------|---------|---------|
+| Model | Kling v2.6, v2.5 Turbo, v2.1 Master, v2 Master, v1.6, v1 | v2.6 |
+| Mode | Standard, Pro | Standard |
+| Duration | 5s, 10s | 5s |
+| Camera | None, Simple, Down & Back, Forward & Up, Right Turn Forward, Left Turn Forward | None |
+
+## Project Structure
+
+```
+app/
+├── Console/              # Artisan commands
+├── Enums/                # StoryStatus, PipelineStage, MessageRole
+├── Events/               # Pipeline event-driven orchestration
+├── Http/
+│   ├── Controllers/      # Story, Chat, Pipeline, Settings, Costs, Dashboard
+│   ├── Middleware/        # EnsureApiKeysConfigured
+│   └── Requests/         # Form request validation
+├── Jobs/                 # Pipeline async jobs (characters, storyboard, video, concat)
+├── Listeners/            # AdvancePipeline
+├── Models/               # Story, Character, ChatMessage, StoryboardFrame, Video, ApiKey, ApiUsage
+└── Services/             # AnthropicService, NanaBananaService, KlingService, ApiKeyVault, etc.
+
+resources/js/
+├── Components/
+│   ├── characters/       # CharacterGallery, CharacterCard
+│   ├── chat/             # ChatWindow, ChatBubble, ChatInput, TypingIndicator
+│   ├── pipeline/         # PipelineTracker, StageCard
+│   ├── stories/          # StoryCard, StoryStatusBadge
+│   ├── storyboard/       # StoryboardGrid, FrameCard
+│   └── video/            # MiniVideoGrid, MiniVideoCard, VideoPlayer, VideoStatusCard
+├── Layouts/              # AuthenticatedLayout, GuestLayout
+└── Pages/
+    ├── Admin/            # API key settings
+    ├── Chat/             # Script writing chat
+    ├── Costs/            # Cost tracking
+    ├── Pipeline/         # Pipeline orchestration UI
+    └── Stories/          # CRUD + printable report
+```

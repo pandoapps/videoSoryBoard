@@ -2,8 +2,6 @@ FROM node:20-alpine
 
 WORKDIR /var/www/html
 
-RUN npm install -g npm@latest
-
 EXPOSE 5173
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+CMD ["sh", "-c", "npm install --legacy-peer-deps && npm run dev -- --host 0.0.0.0"]

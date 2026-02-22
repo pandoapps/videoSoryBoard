@@ -22,7 +22,7 @@ export default function Authenticated({
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    <ApplicationLogo className="block h-9 w-auto" />
                                 </Link>
                             </div>
 
@@ -32,6 +32,24 @@ export default function Authenticated({
                                     active={route().current('dashboard')}
                                 >
                                     Dashboard
+                                </NavLink>
+                                <NavLink
+                                    href={route('stories.index')}
+                                    active={route().current('stories.*')}
+                                >
+                                    Stories
+                                </NavLink>
+                                <NavLink
+                                    href={route('costs.index')}
+                                    active={route().current('costs.*')}
+                                >
+                                    Costs
+                                </NavLink>
+                                <NavLink
+                                    href={route('admin.settings')}
+                                    active={route().current('admin.*')}
+                                >
+                                    Settings
                                 </NavLink>
                             </div>
                         </div>
@@ -136,6 +154,24 @@ export default function Authenticated({
                             active={route().current('dashboard')}
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('stories.index')}
+                            active={route().current('stories.*')}
+                        >
+                            Stories
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('costs.index')}
+                            active={route().current('costs.*')}
+                        >
+                            Costs
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('admin.settings')}
+                            active={route().current('admin.*')}
+                        >
+                            Settings
                         </ResponsiveNavLink>
                     </div>
 

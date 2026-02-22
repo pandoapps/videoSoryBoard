@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
+    ffmpeg \
     && docker-php-ext-install pdo pdo_pgsql pgsql mbstring zip bcmath pcntl xml \
     && pecl install redis \
     && docker-php-ext-enable redis \

@@ -1,3 +1,67 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media print {
+    /* Hide navigation and page header */
+    nav,
+    header.bg-white.shadow {
+        display: none !important;
+    }
+
+    /* Hide print:hidden elements (buttons) */
+    .print\:hidden {
+        display: none !important;
+    }
+
+    /* Show print:block elements (print-only title) */
+    .print\:block {
+        display: block !important;
+    }
+
+    /* Remove background color, min-height and unnecessary padding */
+    .min-h-screen {
+        min-height: auto !important;
+        background: white !important;
+    }
+
+    .py-12 {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* Prevent empty trailing pages */
+    html, body {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Remove shadows for print */
+    .shadow-sm {
+        box-shadow: none !important;
+    }
+
+    /* Prevent table rows from breaking across pages */
+    tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* Keep each grid card (character, storyboard frame) together with its image */
+    .grid > div {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* Keep images together with their parent containers */
+    figure,
+    .relative:has(img) {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* Preserve responsive grid layouts in print */
+    .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}

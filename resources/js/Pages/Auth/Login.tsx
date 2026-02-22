@@ -105,6 +105,16 @@ export default function Login({
                     </PrimaryButton>
                 </div>
             </form>
+
+            <div className="mt-4 text-center">
+                <span className="text-sm text-gray-600">Don't have an account? </span>
+                <Link
+                    href={route('register')}
+                    className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                >
+                    Create account
+                </Link>
+            </div>
         </GuestLayout>
     );
 }

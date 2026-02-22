@@ -7,7 +7,6 @@ services:
     restart: unless-stopped
     volumes:
       - .:/var/www/html
-      - /var/www/html/vendor
     depends_on:
       postgres:
         condition: service_healthy
@@ -75,7 +74,6 @@ services:
     command: php artisan queue:work redis --queue=pipeline,default --sleep=3 --tries=3 --max-time=3600
     volumes:
       - .:/var/www/html
-      - /var/www/html/vendor
     depends_on:
       postgres:
         condition: service_healthy
@@ -94,13 +92,14 @@ services:
       - "5173:5173"
     volumes:
       - .:/var/www/html
-      - /var/www/html/node_modules
+      - vg-node-modules:/var/www/html/node_modules
     networks:
       - vg-network
 
 volumes:
   vg-postgres-data:
   vg-redis-data:
+  vg-node-modules:
 
 networks:
   vg-network:
