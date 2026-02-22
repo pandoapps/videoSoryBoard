@@ -14,12 +14,15 @@ Each stage has a review step where you can approve, edit, or regenerate individu
 
 ## Examples
 
-Two showcase videos demonstrating the full pipeline in action:
+Two showcase videos demonstrating the full pipeline in action — script writing, character generation, storyboard creation, video clip production, cost breakdown, and final concatenated result.
 
-- **Noah's Ark** (43s) — [showcase.mp4](public/showcase.mp4)
-- **Hinduism — The Battle of Lanka** (50s) — [hinduism-showcase.mp4](public/hinduism-showcase.mp4)
+### Noah's Ark (43s)
 
-Both videos walk through every pipeline stage: script writing, character generation, storyboard creation, video clip production, cost breakdown, and final concatenated result.
+<video src="public/showcase.mp4" controls width="100%"></video>
+
+### Hinduism — The Battle of Lanka (50s)
+
+<video src="public/hinduism-showcase.mp4" controls width="100%"></video>
 
 ## Tech Stack
 
